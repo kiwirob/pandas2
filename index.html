@@ -13,6 +13,8 @@
 
   
   
+  
+  
 
   
 
@@ -43,6 +45,7 @@
 
 <body class="wy-body-for-nav" role="document">
 
+   
   <div class="wy-grid-for-nav">
 
     
@@ -83,7 +86,10 @@
           
             
             
-                <ul>
+              
+            
+            
+              <ul>
 <li class="toctree-l1"><a class="reference internal" href="goals.html">Goals and Motivations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="internal-architecture.html">Internals: Data structure changes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="strings.html">Internals: Enhanced string / UTF-8 handling</a></li>
@@ -101,8 +107,10 @@
 
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="#">pandas 2.0 Design Docs</a>
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">pandas 2.0 Design Docs</a>
+        
       </nav>
 
 
@@ -111,23 +119,40 @@
         <div class="rst-content">
           
 
- 
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 <div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="#">Docs</a> &raquo;</li>
-      
-    <li>pandas 2.0 Design Documents</li>
+    
+      <li><a href="#">Docs</a> &raquo;</li>
+        
+      <li>pandas 2.0 Design Documents</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          
-            <a href="_sources/index.txt" rel="nofollow"> View page source</a>
+            
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
@@ -141,12 +166,12 @@
 <a class="reference external" href="http://github.com/pydata/pandas-design">http://github.com/pydata/pandas-design</a></p>
 </div>
 <p>These are a set of documents, based on discussions started in December 2015, to
-assist with discussions around changes to Python pandas&#8217;s internal design
+assist with discussions around changes to Python pandas’s internal design
 intended to better accommodate the evolving needs of the growing Python data
 userbase and to help ensure that pandas remains a relevant and important
 project in the future.</p>
 <p>We also will use this place to collect ideas for things to remove (such as
-deprecated features, but possibly other things) from the library that don&#8217;t
+deprecated features, but possibly other things) from the library that don’t
 necessarily depend on the internal implementation.</p>
 <div class="toctree-wrapper compound">
 <ul>
@@ -177,7 +202,7 @@ necessarily depend on the internal implementation.</p>
 <li class="toctree-l3"><a class="reference internal" href="internal-architecture.html#replacing-blockmanager-without-weakening-pandas">Replacing BlockManager without weakening pandas</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="internal-architecture.html#building-libpandas-in-c-11-14-for-lowest-level-implementation-tier">Building &#8220;libpandas&#8221; in C++11/14 for lowest level implementation tier</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="internal-architecture.html#building-libpandas-in-c-11-14-for-lowest-level-implementation-tier">Building “libpandas” in C++11/14 for lowest level implementation tier</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="internal-architecture.html#microperformance">Microperformance</a></li>
 <li class="toctree-l3"><a class="reference internal" href="internal-architecture.html#c-or-c-c-11-to-be-specific">C or C++ (C++11, to be specific)?</a></li>
 <li class="toctree-l3"><a class="reference internal" href="internal-architecture.html#pandas-array-types"><code class="docutils literal"><span class="pre">pandas.Array</span></code> types</a></li>
@@ -222,12 +247,15 @@ necessarily depend on the internal implementation.</p>
 
 
            </div>
+           <div class="articleComments">
+            
+           </div>
           </div>
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="goals.html" class="btn btn-neutral float-right" title="Goals and Motivations" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="goals.html" class="btn btn-neutral float-right" title="Goals and Motivations" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
     </div>
@@ -262,7 +290,8 @@ necessarily depend on the internal implementation.</p>
             VERSION:'0.1',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
         };
     </script>
       <script type="text/javascript" src="_static/jquery.js"></script>

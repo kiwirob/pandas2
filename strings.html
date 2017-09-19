@@ -13,6 +13,8 @@
 
   
   
+  
+  
 
   
 
@@ -44,6 +46,7 @@
 
 <body class="wy-body-for-nav" role="document">
 
+   
   <div class="wy-grid-for-nav">
 
     
@@ -84,7 +87,10 @@
           
             
             
-                <ul class="current">
+              
+            
+            
+              <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="goals.html">Goals and Motivations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="internal-architecture.html">Internals: Data structure changes</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Internals: Enhanced string / UTF-8 handling</a><ul>
@@ -112,8 +118,10 @@
 
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="index.html">pandas 2.0 Design Docs</a>
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pandas 2.0 Design Docs</a>
+        
       </nav>
 
 
@@ -122,23 +130,40 @@
         <div class="rst-content">
           
 
- 
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 <div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="index.html">Docs</a> &raquo;</li>
-      
-    <li>Internals: Enhanced string / UTF-8 handling</li>
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Internals: Enhanced string / UTF-8 handling</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          
-            <a href="_sources/strings.txt" rel="nofollow"> View page source</a>
+            
+            <a href="_sources/strings.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
@@ -190,7 +215,7 @@ deeper drive) to each value.</li>
 a.k.a. categorical. Thus, we will typically only ever have 1 copy of any
 given string in an array.</li>
 <li>Store the actual string data in a packed UTF-8 buffer. I have seen this in a
-number of places, but notably it&#8217;s the way that <a class="reference external" href="https://github.com/apache/arrow/blob/master/format/Layout.md#list-type">Apache Arrow implements
+number of places, but notably it’s the way that <a class="reference external" href="https://github.com/apache/arrow/blob/master/format/Layout.md#list-type">Apache Arrow implements
 variable-length collections</a>.</li>
 </ul>
 <p>Here is one possible C struct-like layout of this container:</p>
@@ -209,7 +234,7 @@ variable-length collections</a>.</li>
 <span class="p">}</span> <span class="n">string_array_t</span><span class="p">;</span>
 </pre></div>
 </div>
-<p>Here&#8217;s an example of what the data would look like:</p>
+<p>Here’s an example of what the data would look like:</p>
 <div class="highlight-text"><div class="highlight"><pre><span></span>actual data : [&#39;foo&#39;, &#39;bars&#39;, &#39;foo&#39;, null, &#39;bars&#39;]
 
 indices: [0, 1, 0, 0, 1]
@@ -237,11 +262,11 @@ performant as those on Categorical currently are.  performant</li>
 slots here becomes more complex. Whether single value assignments or put /
 array-assignment may likely require constructing a new <code class="docutils literal"><span class="pre">data</span></code> buffer
 (either by <code class="docutils literal"><span class="pre">realloc</span></code> or some other copying mechanism). Without a compaction
-/ &#8220;garbage collection&#8221; step on this buffer it will be possible to have &#8220;dead&#8221;
+/ “garbage collection” step on this buffer it will be possible to have “dead”
 memory inside it (for example, if you did <code class="docutils literal"><span class="pre">arr[:]</span> <span class="pre">=</span> <span class="pre">'a-new-string-value'</span></code>,
 all the existing values would be orphaned).<ul>
 <li>Some systems have addressed this issue by storing all string data in a
-&#8220;global string hash table&#8221;. This is something we could explore, but it
+“global string hash table”. This is something we could explore, but it
 would add quite a bit of complexity to implement and may not be worthwhile
 at this time.</li>
 </ul>
@@ -250,7 +275,7 @@ at this time.</li>
 probably want to call <code class="docutils literal"><span class="pre">PyUnicode_FromStringAndSize</span></code> to construct a string
 (Python 3, therefore Unicode). This requires a memory allocation, whereas it
 currently only has to do a <code class="docutils literal"><span class="pre">Py_INCREF</span></code>.</li>
-<li>Many of pandas&#8217;s existing algorithms assuming Python objects would need to be
+<li>Many of pandas’s existing algorithms assuming Python objects would need to be
 specialized to take advantage of this new memory layout. This is both a pro
 and a con as it will most likely yield significantly better performance.</li>
 </ul>
@@ -263,20 +288,11 @@ and a con as it will most likely yield significantly better performance.</li>
 to yield Python string objects using <code class="docutils literal"><span class="pre">PyUnicode_FromStringAndSize</span></code>. Thus,
 code like this could continue to work:</p>
 <div class="highlight-ipython"><div class="highlight"><pre><span></span><span class="gp">In [1]: </span><span class="n">s</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="s2">&quot;como estás?&quot;</span><span class="p">])</span>
-<span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
-<span class="nn">&lt;ipython-input-1-9d71498eb032&gt;</span> in <span class="ni">&lt;module&gt;</span><span class="nt">()</span>
-<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">s</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="s2">&quot;como estás?&quot;</span><span class="p">])</span>
-
-<span class="ne">NameError</span>: name &#39;pd&#39; is not defined
 
 <span class="gp">In [2]: </span><span class="n">s</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">upper</span><span class="p">())</span>
-<span class="go">                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 ---------------------------------------------------------------------------</span>
-<span class="go">NameError                                 Traceback (most recent call last)</span>
-<span class="go">&lt;ipython-input-2-bd57401b76f7&gt; in &lt;module&gt;()</span>
-<span class="go">----&gt; 1 s.map(lambda x: x.upper())</span>
-
-<span class="go">NameError: name &#39;s&#39; is not defined</span>
+<span class="gh">Out[2]: </span><span class="go"></span>
+<span class="go">0    COMO ESTÁS?</span>
+<span class="go">dtype: object</span>
 </pre></div>
 </div>
 <p>One trade-off is that creating the temporary Python strings is potentially
@@ -293,36 +309,21 @@ types:</p>
 <li>Non-UTF-8 PyBytes</li>
 </ul>
 <div class="highlight-ipython"><div class="highlight"><pre><span></span><span class="gp">In [3]: </span><span class="n">s</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="s2">&quot;como estás?&quot;</span><span class="p">])</span>
-<span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
-<span class="nn">&lt;ipython-input-3-9d71498eb032&gt;</span> in <span class="ni">&lt;module&gt;</span><span class="nt">()</span>
-<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">s</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="s2">&quot;como estás?&quot;</span><span class="p">])</span>
-
-<span class="ne">NameError</span>: name &#39;pd&#39; is not defined
 
 <span class="gp">In [4]: </span><span class="n">s</span>
-<span class="go">                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 ---------------------------------------------------------------------------</span>
-<span class="go">NameError                                 Traceback (most recent call last)</span>
-<span class="go">&lt;ipython-input-4-f4d5d0c0671b&gt; in &lt;module&gt;()</span>
-<span class="go">----&gt; 1 s</span>
-
-<span class="go">NameError: name &#39;s&#39; is not defined</span>
+<span class="gh">Out[4]: </span><span class="go"></span>
+<span class="go">0    como estás?</span>
+<span class="go">dtype: object</span>
 
 <span class="gp">In [5]: </span><span class="n">s</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;latin-1&#39;</span><span class="p">)</span>
-<span class="go">                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       ---------------------------------------------------------------------------</span>
-<span class="go">NameError                                 Traceback (most recent call last)</span>
-<span class="go">&lt;ipython-input-5-ec79db2a61ea&gt; in &lt;module&gt;()</span>
-<span class="go">----&gt; 1 s.str.encode(&#39;latin-1&#39;)</span>
-
-<span class="go">NameError: name &#39;s&#39; is not defined</span>
+<span class="go">                                        Out[5]: </span>
+<span class="go">0    b&#39;como est\xe1s?&#39;</span>
+<span class="go">dtype: object</span>
 
 <span class="gp">In [6]: </span><span class="n">s</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;latin-1&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;latin-1&#39;</span><span class="p">)</span>
-<span class="go">                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               ---------------------------------------------------------------------------</span>
-<span class="go">NameError                                 Traceback (most recent call last)</span>
-<span class="go">&lt;ipython-input-6-afaf17f9b2e9&gt; in &lt;module&gt;()</span>
-<span class="go">----&gt; 1 s.str.encode(&#39;latin-1&#39;).str.decode(&#39;latin-1&#39;)</span>
-
-<span class="go">NameError: name &#39;s&#39; is not defined</span>
+<span class="go">                                                                                      Out[6]: </span>
+<span class="go">0    como estás?</span>
+<span class="go">dtype: object</span>
 </pre></div>
 </div>
 <p>Such data could arise from reading a CSV file in a non-UTF-8 encoding, and you
@@ -343,28 +344,16 @@ validate indicated codec.</li>
 <p>Storing strings as UTF-8 bytes means that things like this become more
 complicated:</p>
 <div class="highlight-ipython"><div class="highlight"><pre><span></span><span class="gp">In [7]: </span><span class="n">s</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="s2">&quot;estás está estáis&quot;</span><span class="p">])</span>
-<span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
-<span class="nn">&lt;ipython-input-7-becbd514f545&gt;</span> in <span class="ni">&lt;module&gt;</span><span class="nt">()</span>
-<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">s</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="s2">&quot;estás está estáis&quot;</span><span class="p">])</span>
-
-<span class="ne">NameError</span>: name &#39;pd&#39; is not defined
 
 <span class="gp">In [8]: </span><span class="n">s</span><span class="o">.</span><span class="n">str</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span>
-<span class="go">                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             ---------------------------------------------------------------------------</span>
-<span class="go">NameError                                 Traceback (most recent call last)</span>
-<span class="go">&lt;ipython-input-8-c40e0c6ca094&gt; in &lt;module&gt;()</span>
-<span class="go">----&gt; 1 s.str[9]</span>
-
-<span class="go">NameError: name &#39;s&#39; is not defined</span>
+<span class="gh">Out[8]: </span><span class="go"></span>
+<span class="go">0    á</span>
+<span class="go">dtype: object</span>
 
 <span class="gp">In [9]: </span><span class="n">s</span><span class="o">.</span><span class="n">str</span><span class="p">[</span><span class="mi">6</span><span class="p">:</span><span class="mi">10</span><span class="p">]</span>
-<span class="go">                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             ---------------------------------------------------------------------------</span>
-<span class="go">NameError                                 Traceback (most recent call last)</span>
-<span class="go">&lt;ipython-input-9-d466580512f8&gt; in &lt;module&gt;()</span>
-<span class="go">----&gt; 1 s.str[6:10]</span>
-
-<span class="go">NameError: name &#39;s&#39; is not defined</span>
+<span class="go">                              Out[9]: </span>
+<span class="go">0    está</span>
+<span class="go">dtype: object</span>
 </pre></div>
 </div>
 <p>Since UTF-8 is a variable length encoding, finding the logical character by
@@ -377,15 +366,18 @@ creating new Python objects) or a 3rd party library. We could make use of the
 
 
            </div>
+           <div class="articleComments">
+            
+           </div>
           </div>
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="copyonwrite.html" class="btn btn-neutral float-right" title="View semantics and Copy-On-Write" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="copyonwrite.html" class="btn btn-neutral float-right" title="View semantics and Copy-On-Write" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="internal-architecture.html" class="btn btn-neutral" title="Internals: Data structure changes" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="internal-architecture.html" class="btn btn-neutral" title="Internals: Data structure changes" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -419,7 +411,8 @@ creating new Python objects) or a 3rd party library. We could make use of the
             VERSION:'0.1',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
         };
     </script>
       <script type="text/javascript" src="_static/jquery.js"></script>

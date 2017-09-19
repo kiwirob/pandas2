@@ -13,6 +13,8 @@
 
   
   
+  
+  
 
   
 
@@ -44,6 +46,7 @@
 
 <body class="wy-body-for-nav" role="document">
 
+   
   <div class="wy-grid-for-nav">
 
     
@@ -84,7 +87,10 @@
           
             
             
-                <ul class="current">
+              
+            
+            
+              <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Goals and Motivations</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#id1">Goals</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#non-goals-faq">Non-goals / FAQ</a></li>
@@ -107,8 +113,10 @@
 
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="index.html">pandas 2.0 Design Docs</a>
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pandas 2.0 Design Docs</a>
+        
       </nav>
 
 
@@ -117,23 +125,40 @@
         <div class="rst-content">
           
 
- 
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 <div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="index.html">Docs</a> &raquo;</li>
-      
-    <li>Goals and Motivations</li>
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Goals and Motivations</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          
-            <a href="_sources/goals.txt" rel="nofollow"> View page source</a>
+            
+            <a href="_sources/goals.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
@@ -144,20 +169,20 @@
 <p>The pandas codebase is now over 8 years old, having grown to over 200,000 lines
 of code from its original ~10,000 LOC in the original 0.1 open source release
 in January 2010.</p>
-<p>At a high level, the &#8220;pandas 2.0&#8221; effort is based on a number of observations:</p>
+<p>At a high level, the “pandas 2.0” effort is based on a number of observations:</p>
 <ul class="simple">
 <li>The pandas 0.x series of releases have consisted with huge amounts of
 iterative improvements to the library along with some major new features, bug
 fixes, and improved documentation. There have also been a series of
-deprecations, API changes, and other evolutions of pandas&#8217;s API to account
+deprecations, API changes, and other evolutions of pandas’s API to account
 for suboptimal design choices (for example: the <code class="docutils literal"><span class="pre">.ix</span></code> operator) made in the
 early days of the project (2010 to 2012).</li>
 <li>The unification of Series and DataFrame internals to be based on a common
-<code class="docutils literal"><span class="pre">NDFrame</span></code> base class and &#8220;block manager&#8221; data structure (originally created
+<code class="docutils literal"><span class="pre">NDFrame</span></code> base class and “block manager” data structure (originally created
 by me in 2011, and heroically driven forward to its modern form by Jeff
 Reback), while introducing many benefits to pandas, has come to be viewed as
 a long-term source of technical debt and code complexity.</li>
-<li>pandas&#8217;s ability to support an increasingly broad set of use cases has been
+<li>pandas’s ability to support an increasingly broad set of use cases has been
 significantly constrained (as will be examined in detail in these documents)
 by its tight coupling to NumPy and therefore subject to various limitations
 in NumPy.</li>
@@ -172,10 +197,10 @@ within a single Python process.</li>
 larger system, such as Dask or Apache Spark. We should consider reducing the
 overhead for making data accessible to pandas (i.e. via memory-mapping or
 other low-overhead memory sharing).</li>
-<li>Rough edges in pandas&#8217;s implementation (e.g. its handling of missing data
+<li>Rough edges in pandas’s implementation (e.g. its handling of missing data
 across data types) are being exposed to users.</li>
 </ul>
-<p>These documents are largely concerned with pandas&#8217;s internal design, which is
+<p>These documents are largely concerned with pandas’s internal design, which is
 mostly invisible to average users. Advanced users of pandas are generally
 familiar with some of these internal details, particular around performance and
 memory use, and so the degree to which users are impacted will vary quite a
@@ -192,9 +217,9 @@ NA.</li>
 difficult to conttrol)</li>
 <li>Clearer semantics around non-NumPy data types, and permitting new pandas-only
 data types to be added</li>
-<li>Exposing a &#8220;libpandas&#8221; C/C++ API to other Python library developers: the
+<li>Exposing a “libpandas” C/C++ API to other Python library developers: the
 internals of Series and DataFrame are only weakly accessible in other
-developers&#8217; native code. This has been a limitation for scikit-learn and
+developers’ native code. This has been a limitation for scikit-learn and
 other projects requiring C or Cython-level access to pandas object data.</li>
 <li>Removal of deprecated functionality</li>
 </ul>
@@ -202,7 +227,7 @@ other projects requiring C or Cython-level access to pandas object data.</li>
 <div class="section" id="non-goals-faq">
 <h2>Non-goals / FAQ<a class="headerlink" href="#non-goals-faq" title="Permalink to this headline">¶</a></h2>
 <p>As this will be a quite nuanced discussion, especially for those not intimately
-familiar with pandas&#8217;s implementation details, I wanted to speak to a couple of
+familiar with pandas’s implementation details, I wanted to speak to a couple of
 commonly-asked questions in brief:</p>
 <hr class="docutils" />
 <ol class="arabic simple">
@@ -227,59 +252,59 @@ more dependable and future-proof.</li>
 <ol class="arabic simple" start="2">
 <li><strong>By decoupling from NumPy, it sounds like you are reimplementing NumPy or
 adding a new data type system</strong><ul>
-<li>Simply put: no. But it&#8217;s more complicated than that because of the
-numerous interpretations of &#8220;type system&#8221;.</li>
+<li>Simply put: no. But it’s more complicated than that because of the
+numerous interpretations of “type system”.</li>
 <li>pandas already contains a large amount (10s of KLOCs) of custom
 computational code (see, for example,
 <a class="reference external" href="https://github.com/pydata/pandas/tree/master/pandas/src">https://github.com/pydata/pandas/tree/master/pandas/src</a>) that implements
 functionality not present in NumPy.</li>
-<li>pandas already features its own (what I will describe as a) &#8220;logical type
-system&#8221;, including things like custom data types (such as that of
+<li>pandas already features its own (what I will describe as a) “logical type
+system”, including things like custom data types (such as that of
 <code class="docutils literal"><span class="pre">pandas.Categorical</span></code>), pandas-specific missing data representation, and
 implicit type casting (e.g. integer to float on introduction of missing
 data). Unfortunately, these logical data types are somewhat weakly
 expressed, and the mix of NumPy dtype objects and custom pandas types is
 problematic for many internal (implementation) and external (user API)
 reasons. I will examine in detail the difference between <strong>physical
-types</strong> (i.e. NumPy&#8217;s dtypes) and <strong>logical types</strong> (i.e. what pandas
+types</strong> (i.e. NumPy’s dtypes) and <strong>logical types</strong> (i.e. what pandas
 currently has, implicitly).</li>
 </ul>
 </li>
 </ol>
 <hr class="docutils" />
 <ol class="arabic simple" start="3">
-<li><strong>Shouldn&#8217;t you try to accomplish your goals by contributing work to NumPy
-instead of investing major work in pandas&#8217;s internals?</strong><ul>
-<li>In my opinion, this is a &#8220;false dichotomy&#8221;; i.e. these things are not
+<li><strong>Shouldn’t you try to accomplish your goals by contributing work to NumPy
+instead of investing major work in pandas’s internals?</strong><ul>
+<li>In my opinion, this is a “false dichotomy”; i.e. these things are not
 mutually exclusive.</li>
 <li>Yes, we should define, scope, and if possible help implement improvements
 to NumPy that make sense. As NumPy serves a significantly larger and more
 diverse set of users, major changes to the NumPy C codebase must be
 approached more conservatively.</li>
-<li>It is unclear that pandas&#8217;s body of domain-specific data handling and
-computational code is entirely &#8220;in scope&#8221; for NumPy. Some technical
-details, such as our categorical or datetime data semantics, &#8220;group by&#8221;
+<li>It is unclear that pandas’s body of domain-specific data handling and
+computational code is entirely “in scope” for NumPy. Some technical
+details, such as our categorical or datetime data semantics, “group by”
 functionality, relational algebra (joins), etc., may be ideal for pandas
 but not necessarily ideal for a general user of NumPy. My opinion is that
-functionality from NumPy we wish to use in pandas should &#8220;pass through&#8221; to
-the user unmodified, but we must retain the flexibility to work &#8220;outside
-the box&#8221; (implement things not found in NumPy) without adding technical
+functionality from NumPy we wish to use in pandas should “pass through” to
+the user unmodified, but we must retain the flexibility to work “outside
+the box” (implement things not found in NumPy) without adding technical
 debt or user API complexity.</li>
 </ul>
 </li>
 </ol>
 <hr class="docutils" />
 <ol class="arabic simple" start="4">
-<li><strong>API changes / breaks are thought to be bad; don&#8217;t you have a
+<li><strong>API changes / breaks are thought to be bad; don’t you have a
 responsibility to maintain backwards compatibility for users that heavily
 depend on pandas?</strong><ul>
-<li>It&#8217;s true that APIs should not be broken or changed, and as such should be
+<li>It’s true that APIs should not be broken or changed, and as such should be
 approached with extreme caution.</li>
-<li>The goal of the pandas 2.0 initiative is to only make &#8220;good&#8221; API breaks
+<li>The goal of the pandas 2.0 initiative is to only make “good” API breaks
 that yield a net benefit that can be easily demonstrated. As an example:
 adding native missing data support to integer and boolean data (without
 casting to another physical storage type) may break user code that has
-knowledge of the &#8220;rough edge&#8221; (the behavior that we are fixing). As these
+knowledge of the “rough edge” (the behavior that we are fixing). As these
 changes will mostly affect advanced pandas users, I expect they will be
 welcomed.</li>
 <li>Any major API change or break will be documented and justified to assist
@@ -288,8 +313,8 @@ with code migration.</li>
 pandas 2.0 development branch to get early feedback from heavy pandas
 users to understand the impact of changes and how we can better help the
 existing user base.</li>
-<li>Some users will find that a certain piece of code has been working &#8220;by
-accident&#8221; (i.e. relying upon undocumented behavior). This kind of breakage
+<li>Some users will find that a certain piece of code has been working “by
+accident” (i.e. relying upon undocumented behavior). This kind of breakage
 is already a routine occurrence unfortunately.</li>
 </ul>
 </li>
@@ -301,7 +326,7 @@ is already a routine occurrence unfortunately.</li>
 architected, and more future-proof library that is a drop-in replacement for
 90-95% of pandas user code. There will be API / code breakages, but the intent
 of any code breakage will almost always be to fix something that has been
-&#8220;wrong&#8221; or inconsistent. Many advanced users will have worked around some of
+“wrong” or inconsistent. Many advanced users will have worked around some of
 these rough edges, and so their workarounds may either need to be removed or
 changed to accommodate the new (and hopefully it can be agreed in each case:
 better) semantics.</p>
@@ -310,15 +335,18 @@ better) semantics.</p>
 
 
            </div>
+           <div class="articleComments">
+            
+           </div>
           </div>
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="internal-architecture.html" class="btn btn-neutral float-right" title="Internals: Data structure changes" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="internal-architecture.html" class="btn btn-neutral float-right" title="Internals: Data structure changes" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="index.html" class="btn btn-neutral" title="pandas 2.0 Design Documents" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="index.html" class="btn btn-neutral" title="pandas 2.0 Design Documents" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -352,7 +380,8 @@ better) semantics.</p>
             VERSION:'0.1',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
         };
     </script>
       <script type="text/javascript" src="_static/jquery.js"></script>
