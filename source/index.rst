@@ -4,7 +4,7 @@ pandas 2.0 Design Documents
 .. note::
 
   These documents are a work in progress. Please see ongoing discussions on
-  http://github.com/pydata/pandas-design
+  http://github.com/pandas-dev/pandas2
 
 These are a set of documents, based on discussions started in December 2015, to
 assist with discussions around changes to Python pandas's internal design
